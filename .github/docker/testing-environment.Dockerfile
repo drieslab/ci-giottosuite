@@ -81,7 +81,7 @@ RUN R -e "reticulate::install_miniconda()" && \
     'python-igraph==0.10.2', 'leidenalg==0.9.0', 'scikit-learn==1.1.3'))" && \
     R -e "reticulate::conda_install(packages = c('python-louvain==0.16', 'smfishhmrf', \
     'session-info', 'scanpy', 'scrublet'), pip = TRUE)" && \
-    conda clean -afy && \
+    R -e "system('/opt/miniconda/bin/conda clean -afy')" && \
     rm -rf /opt/miniconda/pkgs/*
 
 # Set working directory
