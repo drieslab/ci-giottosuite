@@ -29,6 +29,7 @@ RUN R -e "install.packages(c(\
     'deldir', \
     'devtools', \
     'exactextractr', \
+    'FNN', \
     'future', \
     'future.apply', \
     'geometry', \
@@ -88,10 +89,27 @@ RUN R -e "install.packages(c(\
 
 # Install Bioconductor packages
 RUN R -e "if (!requireNamespace('BiocManager', quietly = TRUE)) install.packages('BiocManager'); \
-    BiocManager::install(c('Biobase', 'BiocParallel', 'BiocCheck', 'BiocStyle', 'BiocSingular', \
-    'chihaya', 'ComplexHeatmap', 'DelayedArray', 'DelayedMatrixStats', 'HDF5Array', 'MatrixGenerics', 'rhdf5', \
-    'S4Vectors', 'ScaledMatrix', 'SingleCellExperiment', 'sparseMatrixStats', 'SpatialExperiment', \
-    'STexampleData', 'SummarizedExperiment'), ask=FALSE)"
+    BiocManager::install(c( \
+    'Biobase', \
+    'BiocParallel', \
+    'BiocCheck', \
+    'BiocStyle', \
+    'BiocSingular', \
+    'chihaya', \
+    'ComplexHeatmap', \
+    'DelayedArray', \
+    'DelayedMatrixStats', \
+    'HDF5Array', \
+    'MatrixGenerics', \
+    'rhdf5', \
+    'S4Vectors', \
+    'ScaledMatrix', \
+    'SingleCellExperiment', \
+    'sparseMatrixStats', \
+    'SpatialExperiment', \
+    'STexampleData', \
+    'SummarizedExperiment' \
+    ), ask=FALSE)"
     
 # Install GitHub packages
 RUN R -e "remotes::install_github('rspatial/terra')"
