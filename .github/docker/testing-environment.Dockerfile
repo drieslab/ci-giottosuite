@@ -75,6 +75,7 @@ RUN R -e "install.packages(c(\
     'SeuratObject', \
     'sf', \
     'sp', \
+    'spdep', \
     'stats', \
     'stars', \
     'testthat', \
