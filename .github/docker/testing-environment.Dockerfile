@@ -21,14 +21,26 @@ RUN apt-get update && apt-get install -y \
 # Install CRAN packages
 RUN R -e "install.packages(c(\
     'checkmate', \
+    'colorRamp2', \
     'covr', \
+    'cowplot', \
     'data.table', \
+    'dbscan', \
+    'deldir', \
     'devtools', \
     'exactextractr', \
     'future', \
     'future.apply', \
     'geometry', \
+    'ggalluvial', \
+    'ggdendro', \
+    'ggforce', \
+    'ggraph', \
+    'ggplot2', \
+    'ggrepel', \
     'gtools', \
+    'htmlwidgets', \
+    'igraph', \
     'jsonlite', \
     'lintr', \
     'knitr', \
@@ -36,10 +48,14 @@ RUN R -e "install.packages(c(\
     'magick', \
     'magrittr', \
     'Matrix', \
+    'matrixStats', \
     'methods', \
+    'networkD3', \
     'parallel', \
     'plotly', \
+    'png', \
     'progressr', \
+    'qs', \
     'R.utils', \
     'raster', \
     'rcmdcheck', \
@@ -51,7 +67,10 @@ RUN R -e "install.packages(c(\
     'rlang', \
     'rmarkdown', \
     'RTriangle', \
+    'scales', \
     'scattermore', \
+    'scatterpie', \
+    'scran', \
     'Seurat', \
     'SeuratObject', \
     'sf', \
@@ -59,15 +78,18 @@ RUN R -e "install.packages(c(\
     'stats', \
     'stars', \
     'testthat', \
-    'qs', \
+    'tiff', \
+    'uwot', \
+    'viridis', \
+    'viridisLite', \
     'xml2' \
     ))"
 
 # Install Bioconductor packages
 RUN R -e "if (!requireNamespace('BiocManager', quietly = TRUE)) install.packages('BiocManager'); \
-    BiocManager::install(c('Biobase', 'BiocParallel', 'BiocCheck', 'BiocStyle', \
-    'chihaya', 'DelayedArray', 'DelayedMatrixStats', 'HDF5Array', 'rhdf5', \
-    'S4Vectors', 'ScaledMatrix', 'SingleCellExperiment', 'SpatialExperiment', \
+    BiocManager::install(c('Biobase', 'BiocParallel', 'BiocCheck', 'BiocStyle', 'BiocSingular', \
+    'chihaya', 'ComplexHeatmap', 'DelayedArray', 'DelayedMatrixStats', 'HDF5Array', 'MatrixGenerics', 'rhdf5', \
+    'S4Vectors', 'ScaledMatrix', 'SingleCellExperiment', 'sparseMatrixStats', 'SpatialExperiment', \
     'STexampleData', 'SummarizedExperiment'), ask=FALSE)"
     
 # Install GitHub packages
