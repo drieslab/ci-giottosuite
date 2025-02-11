@@ -109,19 +109,21 @@ RUN R -e "install.packages('pak', repos = 'https://r-lib.github.io/p/pak/stable/
 
 # Validate package installation
 RUN echo "Validating dependencies..." && \
-    R -e '\
-    packages <- c("sf", "stars", "raster", "sp", "terra", "Matrix", "igraph"); \
+    R -e 'packages <- c("sf", "stars", "raster", "sp", "terra", "Matrix", "igraph"); \
     load_res <- vapply(packages, function(pkg) { \
-      load_fail <- !requireNamespace(pkg, quietly = TRUE); \
-      if (load_fail) message(paste("Package", pkg, "failed to load")); \
-      else message(paste("✓", pkg, "loaded successfully")); \
-      load_fail; \
+        load_fail <- !requireNamespace(pkg, quietly = TRUE); \
+        if (load_fail) { \
+            message(paste("Package", pkg, "failed to load")); \
+            TRUE; \
+        } else { \
+            message(paste("✓", pkg, "loaded successfully")); \
+            FALSE; \
+        } \
     }, FUN.VALUE = logical(1L)); \
     if (any(load_res)) stop("some package(s) did not install correctly"); \
     message("Checking sf capabilities:"); \
     print(sf::sf_extSoftVersion()); \
-    message("All spatial validation checks passed!"); \
-    '
+    message("All spatial validation checks passed!");'
 
 # Setup Python environment and clean up
 ENV RETICULATE_MINICONDA_PATH=/opt/miniconda
