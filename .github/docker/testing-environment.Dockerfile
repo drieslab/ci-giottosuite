@@ -1,10 +1,9 @@
 FROM rocker/r-ver:4.4.2
 
-# Install system dependencies and clean up
+# Install minimal system dependencies for pak
 RUN apt-get update && apt-get install -y \
     software-properties-common \
-    && add-apt-repository ppa:ubuntugis/ubuntugis-unstable \
-    && apt-get update && apt-get install -y \
+    curl \
     libcurl4-openssl-dev \
     libssl-dev \
     libxml2-dev \
@@ -12,21 +11,12 @@ RUN apt-get update && apt-get install -y \
     pandoc \
     python3-pip \
     git \
-    libudunits2-dev \
-    libsqlite3-dev \
-    libgdal-dev \
-    gdal-bin \
-    libgeos-dev \
-    libproj-dev \
-    libnetcdf-dev \
-    libtiff5-dev \
-    libwebp-dev \
-    libmagick++-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Install CRAN packages, Bioconductor packages, and GitHub packages and clean up
-RUN R -e "install.packages(c( \
+# Install R packages using pak
+RUN R -e "install.packages('pak', repos = 'https://r-lib.github.io/p/pak/stable/'); \
+    pak::pkg_install(c( \
     'checkmate', \
     'colorRamp2', \
     'covr', \
@@ -94,45 +84,43 @@ RUN R -e "install.packages(c( \
     'viridisLite', \
     'xml2' \
     ))" && \
-    R -e "if (!requireNamespace('BiocManager', quietly = TRUE)) install.packages('BiocManager'); \
-    BiocManager::install(c( \
-    'Biobase', \
-    'BiocParallel', \
-    'BiocCheck', \
-    'BiocStyle', \
-    'BiocSingular', \
-    'chihaya', \
-    'ComplexHeatmap', \
-    'DelayedArray', \
-    'DelayedMatrixStats', \
-    'HDF5Array', \
-    'MatrixGenerics', \
-    'rhdf5', \
-    'S4Vectors', \
-    'ScaledMatrix', \
-    'SingleCellExperiment', \
-    'sparseMatrixStats', \
-    'SpatialExperiment', \
-    'STexampleData', \
-    'SummarizedExperiment' \
-    ), ask=FALSE)" && \
-    rm -rf /tmp/downloaded_packages/ \
-    && echo "Validating some dependencies..." \
-    && gdalinfo --version \
-    && proj \
-    && geos-config --version \
-    && R -e '\
-       packages <- c("sf", "stars", "raster", "sp", "terra", "Matrix", "igraph"); \
-       load_res <- vapply(packages, function(pkg) { \
-         load_fail <- !requireNamespace(pkg, quietly = TRUE); \
-         if (load_fail) message(paste("Package", pkg, "failed to load")); \
-         else message(paste("✓", pkg, "loaded successfully")); \
-         load_fail; \
-       }, FUN.VALUE = logical(1L)); \
-       if (any(load_res)) stop("some package(s) did not install correctly"); \
-       message("Checking sf capabilities:"); \
-       print(sf::sf_extSoftVersion()); \
-       message("All spatial validation checks passed!"); \
+    R -e "pak::pkg_install(c( \
+    'bioc::Biobase', \
+    'bioc::BiocParallel', \
+    'bioc::BiocCheck', \
+    'bioc::BiocStyle', \
+    'bioc::BiocSingular', \
+    'bioc::chihaya', \
+    'bioc::ComplexHeatmap', \
+    'bioc::DelayedArray', \
+    'bioc::DelayedMatrixStats', \
+    'bioc::HDF5Array', \
+    'bioc::MatrixGenerics', \
+    'bioc::rhdf5', \
+    'bioc::S4Vectors', \
+    'bioc::ScaledMatrix', \
+    'bioc::SingleCellExperiment', \
+    'bioc::sparseMatrixStats', \
+    'bioc::SpatialExperiment', \
+    'bioc::STexampleData', \
+    'bioc::SummarizedExperiment' \
+    ))" && \
+    rm -rf /tmp/downloaded_packages/
+
+# Validate package installation
+RUN echo "Validating dependencies..." && \
+    R -e '\
+    packages <- c("sf", "stars", "raster", "sp", "terra", "Matrix", "igraph"); \
+    load_res <- vapply(packages, function(pkg) { \
+      load_fail <- !requireNamespace(pkg, quietly = TRUE); \
+      if (load_fail) message(paste("Package", pkg, "failed to load")); \
+      else message(paste("✓", pkg, "loaded successfully")); \
+      load_fail; \
+    }, FUN.VALUE = logical(1L)); \
+    if (any(load_res)) stop("some package(s) did not install correctly"); \
+    message("Checking sf capabilities:"); \
+    print(sf::sf_extSoftVersion()); \
+    message("All spatial validation checks passed!"); \
     '
 
 # Setup Python environment and clean up
