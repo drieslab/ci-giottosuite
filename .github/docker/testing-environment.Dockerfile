@@ -79,6 +79,7 @@ RUN R -e "install.packages(c( \
     'spdep', \
     'stats', \
     'stars', \
+    'terra', \
     'testthat', \
     'tiff', \
     'uwot', \
@@ -107,8 +108,7 @@ RUN R -e "install.packages(c( \
     'SpatialExperiment', \
     'STexampleData', \
     'SummarizedExperiment' \
-    ), ask=FALSE)" && \
-    R -e "remotes::install_github('rspatial/terra')" && \
+    ), ask=FALSE)"
     rm -rf /tmp/downloaded_packages/
 
 # Setup Python environment and clean up
