@@ -12,9 +12,15 @@ RUN apt-get update && apt-get install -y \
     pandoc \
     python3-pip \
     git \
+    libudunits2-dev \
+    libsqlite3-dev \
     libgdal-dev \
+    gdal-bin \
     libgeos-dev \
     libproj-dev \
+    libnetcdf-dev \
+    libtiff5-dev \
+    libwebp-dev \
     libmagick++-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
