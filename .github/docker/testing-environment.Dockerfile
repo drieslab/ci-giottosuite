@@ -116,7 +116,21 @@ RUN R -e "install.packages(c( \
     'STexampleData', \
     'SummarizedExperiment' \
     ), ask=FALSE)" && \
-    rm -rf /tmp/downloaded_packages/
+    rm -rf /tmp/downloaded_packages/ \
+    && echo "Validating some dependencies..." \
+    && gdalinfo --version \
+    && proj \
+    && geos-config --version \
+    && R -e '\
+       packages <- c("sf", "stars", "raster", "sp", "terra", "Matrix", "igraph"); \
+       lapply(packages, function(pkg) { \
+         if (!requireNamespace(pkg, quietly = TRUE)) stop(paste("Package", pkg, "failed to load")); \
+         message(paste("✓", pkg, "loaded successfully")); \
+       }); \
+       message("Checking sf capabilities:"); \
+       print(sf::sf_extSoftVersion()); \
+       message("All spatial validation checks passed!"); \
+    '
 
 # Setup Python environment and clean up
 ENV RETICULATE_MINICONDA_PATH=/opt/miniconda
