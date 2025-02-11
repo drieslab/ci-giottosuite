@@ -108,7 +108,7 @@ RUN R -e "install.packages(c( \
     'SpatialExperiment', \
     'STexampleData', \
     'SummarizedExperiment' \
-    ), ask=FALSE)"
+    ), ask=FALSE)" && \
     rm -rf /tmp/downloaded_packages/
 
 # Setup Python environment and clean up
