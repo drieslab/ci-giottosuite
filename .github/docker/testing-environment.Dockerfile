@@ -53,6 +53,7 @@ RUN R -e "install.packages('pak', repos = 'https://r-lib.github.io/p/pak/stable/
     'plotly', \
     'png', \
     'progressr', \
+    'qpdf', \
     'qs', \
     'R.utils', \
     'raster', \
