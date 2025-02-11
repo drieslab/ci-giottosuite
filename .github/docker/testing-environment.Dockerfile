@@ -123,10 +123,13 @@ RUN R -e "install.packages(c( \
     && geos-config --version \
     && R -e '\
        packages <- c("sf", "stars", "raster", "sp", "terra", "Matrix", "igraph"); \
-       lapply(packages, function(pkg) { \
-         if (!requireNamespace(pkg, quietly = TRUE)) stop(paste("Package", pkg, "failed to load")); \
-         message(paste("✓", pkg, "loaded successfully")); \
-       }); \
+       load_res <- vapply(packages, function(pkg) { \
+         load_fail <- !requireNamespace(pkg, quietly = TRUE); \
+         if (load_fail) message(paste("Package", pkg, "failed to load")); \
+         else message(paste("✓", pkg, "loaded successfully")); \
+         load_fail; \
+       }, FUN.VALUE = logical(1L)); \
+       if (any(load_res)) stop("some package(s) did not install correctly"); \
        message("Checking sf capabilities:"); \
        print(sf::sf_extSoftVersion()); \
        message("All spatial validation checks passed!"); \
