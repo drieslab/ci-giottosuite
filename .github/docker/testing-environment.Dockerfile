@@ -11,6 +11,10 @@ RUN apt-get update && apt-get install -y \
     pandoc \
     python3-pip \
     git \
+    libzstd-dev \
+    liblz4-dev \
+    libsnappy-dev \
+    libbz2-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -106,11 +110,17 @@ RUN R -e "install.packages('pak', repos = 'https://r-lib.github.io/p/pak/stable/
     'bioc::STexampleData', \
     'bioc::SummarizedExperiment' \
     ))" && \
+    R -e "Sys.setenv(ARROW_WITH_ZSTD = 'ON'); \
+    Sys.setenv(ARROW_WITH_GZ2 = 'ON'); \
+    Sys.setenv(ARROW_WITH_BZ2 = 'ON'); \
+    Sys.setenv(ARROW_WITH_LZ4 = 'ON'); \
+    Sys.setenv(ARROW_WITH_SNAPPY = 'ON'); \
+    install.packages('arrow', repos = c('https://apache.r-universe.dev'), type = 'source')" && \
     rm -rf /tmp/downloaded_packages/
 
 # Validate package installation
 RUN echo "Validating dependencies..." && \
-    R -e 'packages <- c("sf", "stars", "raster", "sp", "terra", "Matrix", "igraph"); \
+    R -e 'packages <- c("sf", "stars", "raster", "sp", "terra", "Matrix", "igraph", "arrow"); \
     load_res <- vapply(packages, function(pkg) { \
         load_fail <- !requireNamespace(pkg, quietly = TRUE); \
         if (load_fail) { \
