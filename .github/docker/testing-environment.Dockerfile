@@ -21,6 +21,8 @@ RUN apt-get update && apt-get install -y \
 # Install R packages using pak
 RUN R -e "install.packages('pak', repos = 'https://r-lib.github.io/p/pak/stable/'); \
     pak::pkg_install(c( \
+    'assertthat', \
+    'bit64', \
     'checkmate', \
     'colorRamp2', \
     'covr', \
@@ -40,6 +42,7 @@ RUN R -e "install.packages('pak', repos = 'https://r-lib.github.io/p/pak/stable/
     'ggraph', \
     'ggplot2', \
     'ggrepel', \
+    'glue', \
     'gtools', \
     'htmlwidgets', \
     'igraph', \
@@ -54,12 +57,14 @@ RUN R -e "install.packages('pak', repos = 'https://r-lib.github.io/p/pak/stable/
     'methods', \
     'networkD3', \
     'parallel', \
+    'purrr', \
     'plotly', \
     'png', \
     'progressr', \
     'qpdf', \
     'qs', \
     'R.utils', \
+    'R6', \
     'raster', \
     'rcmdcheck', \
     'RColorBrewer', \
@@ -83,8 +88,10 @@ RUN R -e "install.packages('pak', repos = 'https://r-lib.github.io/p/pak/stable/
     'stars', \
     'terra', \
     'testthat', \
+    'tidyselect', \
     'tiff', \
     'uwot', \
+    'vctrs', \
     'viridis', \
     'viridisLite', \
     'xml2' \
