@@ -31,6 +31,7 @@ RUN R -e "install.packages('pak', repos = 'https://r-lib.github.io/p/pak/stable/
     'dbscan', \
     'deldir', \
     'devtools', \
+    'DT', \
     'exactextractr', \
     'FNN', \
     'future', \
@@ -44,6 +45,7 @@ RUN R -e "install.packages('pak', repos = 'https://r-lib.github.io/p/pak/stable/
     'ggrepel', \
     'glue', \
     'gtools', \
+    'htmltools', \
     'htmlwidgets', \
     'igraph', \
     'jsonlite', \
