@@ -54,12 +54,10 @@ RUN R -e "install.packages('pak', repos = 'https://r-lib.github.io/p/pak/stable/
     'lifecycle', \
     'magick', \
     'magrittr', \
-    'Matrix', \
     'matrixStats', \
     'methods', \
     'networkD3', \
     'parallel', \
-    'pdflatex', \
     'purrr', \
     'plotly', \
     'png', \
