@@ -147,6 +147,9 @@ RUN echo "Validating dependencies..." && \
 # Setup Python environment and clean up
 ENV RETICULATE_MINICONDA_PATH=/opt/miniconda
 RUN R -e "reticulate::install_miniconda()" && \
+    /opt/miniconda/bin/conda config --remove channels defaults && \
+    /opt/miniconda/bin/conda config --add channels conda-forge && \
+    /opt/miniconda/bin/conda config --set channel_priority strict && \
     R -e "reticulate::conda_create(envname = 'giotto_env', python_version = '3.10.2')" && \
     R -e "reticulate::conda_install(packages = 'scipy', envname = 'r-reticulate')" && \
     R -e "reticulate::conda_install(packages = c( \
