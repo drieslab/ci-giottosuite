@@ -146,20 +146,24 @@ RUN echo "Validating dependencies..." && \
 
 # Setup Python environment and clean up
 ENV RETICULATE_MINICONDA_PATH=/opt/miniconda
-RUN R -e "reticulate::install_miniconda()" && \
+
+# Install miniconda without auto-creating environments, then configure conda-forge
+RUN R -e "reticulate::install_miniconda(update = FALSE, force = FALSE)" && \
     /opt/miniconda/bin/conda config --remove channels defaults && \
     /opt/miniconda/bin/conda config --add channels conda-forge && \
     /opt/miniconda/bin/conda config --set channel_priority strict && \
-    R -e "reticulate::conda_create(envname = 'giotto_env', python_version = '3.10.2')" && \
-    R -e "reticulate::conda_install(packages = 'scipy', envname = 'r-reticulate')" && \
+    /opt/miniconda/bin/conda update -n base -c conda-forge conda -y && \
+    R -e "reticulate::conda_create(envname = 'r-reticulate', python_version = '3.10', channel = 'conda-forge')" && \
+    R -e "reticulate::conda_create(envname = 'giotto_env', python_version = '3.10.2', channel = 'conda-forge')" && \
+    R -e "reticulate::conda_install(packages = 'scipy', envname = 'r-reticulate', channel = 'conda-forge')" && \
     R -e "reticulate::conda_install(packages = c( \
     'scipy', \
-    'pandas==1.5.1', \
-    'networkx==2.8.8', \
-    'python-igraph==0.10.2', \
-    'leidenalg==0.9.0', \
-    'scikit-learn==1.1.3' \
-    ), envname = 'giotto_env')" && \
+    'pandas=1.5.1', \
+    'networkx=2.8.8', \
+    'python-igraph=0.10.2', \
+    'leidenalg=0.9.0', \
+    'scikit-learn=1.1.3' \
+    ), envname = 'giotto_env', channel = 'conda-forge')" && \
     R -e "reticulate::conda_install(packages = c( \
     'python-louvain==0.16', \
     'smfishhmrf', \
@@ -167,7 +171,7 @@ RUN R -e "reticulate::install_miniconda()" && \
     'scanpy', \
     'scrublet' \
     ), envname = 'giotto_env', pip = TRUE)" && \
-    R -e "system('/opt/miniconda/bin/conda clean -afy')" && \
+    /opt/miniconda/bin/conda clean -afy && \
     rm -rf /opt/miniconda/pkgs/*
 
 WORKDIR /package
