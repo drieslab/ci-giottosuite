@@ -147,15 +147,18 @@ RUN echo "Validating dependencies..." && \
 # Setup Python environment and clean up
 ENV RETICULATE_MINICONDA_PATH=/opt/miniconda
 
-# Install miniconda without auto-creating environments, then configure conda-forge
-RUN R -e "reticulate::install_miniconda(update = FALSE, force = FALSE)" && \
+# Install miniconda manually and configure conda-forge BEFORE reticulate uses it
+RUN curl -L -O "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh" && \
+    bash Miniconda3-latest-Linux-x86_64.sh -b -p /opt/miniconda && \
+    rm Miniconda3-latest-Linux-x86_64.sh && \
     /opt/miniconda/bin/conda config --remove channels defaults && \
     /opt/miniconda/bin/conda config --add channels conda-forge && \
     /opt/miniconda/bin/conda config --set channel_priority strict && \
-    /opt/miniconda/bin/conda update -n base -c conda-forge conda -y && \
-    R -e "reticulate::conda_create(envname = 'r-reticulate', python_version = '3.10', channel = 'conda-forge')" && \
-    R -e "reticulate::conda_create(envname = 'giotto_env', python_version = '3.10.2', channel = 'conda-forge')" && \
-    R -e "reticulate::conda_install(packages = 'scipy', envname = 'r-reticulate', channel = 'conda-forge')" && \
+    /opt/miniconda/bin/conda update -n base -c conda-forge conda -y
+
+# Now use reticulate to manage environments (miniconda already configured)
+RUN R -e "reticulate::conda_create(envname = 'giotto_env', python_version = '3.10.2')" && \
+    R -e "reticulate::conda_install(packages = 'scipy', envname = 'r-reticulate')" && \
     R -e "reticulate::conda_install(packages = c( \
     'scipy', \
     'pandas=1.5.1', \
@@ -163,7 +166,7 @@ RUN R -e "reticulate::install_miniconda(update = FALSE, force = FALSE)" && \
     'python-igraph=0.10.2', \
     'leidenalg=0.9.0', \
     'scikit-learn=1.1.3' \
-    ), envname = 'giotto_env', channel = 'conda-forge')" && \
+    ), envname = 'giotto_env')" && \
     R -e "reticulate::conda_install(packages = c( \
     'python-louvain==0.16', \
     'smfishhmrf', \
