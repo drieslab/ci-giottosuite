@@ -147,16 +147,14 @@ RUN echo "Validating dependencies..." && \
 # Setup Python environment and clean up
 ENV RETICULATE_MINICONDA_PATH=/opt/miniconda
 
-# Install miniconda manually and configure conda-forge BEFORE reticulate uses it
-RUN curl -L -O "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh" && \
-    bash Miniconda3-latest-Linux-x86_64.sh -b -p /opt/miniconda && \
-    rm Miniconda3-latest-Linux-x86_64.sh && \
-    /opt/miniconda/bin/conda config --remove channels defaults && \
-    /opt/miniconda/bin/conda config --add channels conda-forge && \
-    /opt/miniconda/bin/conda config --set channel_priority strict && \
-    /opt/miniconda/bin/conda update -n base -c conda-forge conda -y
+# Install Miniforge (ToS-free, conda-forge only) and symlink to /opt/miniconda
+RUN curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh" && \
+    bash Miniforge3-Linux-x86_64.sh -b -p /opt/miniforge && \
+    rm Miniforge3-Linux-x86_64.sh && \
+    ln -s /opt/miniforge /opt/miniconda && \
+    /opt/miniforge/bin/conda config --set channel_priority strict
 
-# Now use reticulate to manage environments (miniconda already configured)
+# Create Python environments and install packages
 RUN R -e "reticulate::conda_create(envname = 'giotto_env', python_version = '3.10.2')" && \
     R -e "reticulate::conda_install(packages = 'scipy', envname = 'r-reticulate')" && \
     R -e "reticulate::conda_install(packages = c( \
@@ -174,8 +172,8 @@ RUN R -e "reticulate::conda_create(envname = 'giotto_env', python_version = '3.1
     'scanpy', \
     'scrublet' \
     ), envname = 'giotto_env', pip = TRUE)" && \
-    /opt/miniconda/bin/conda clean -afy && \
-    rm -rf /opt/miniconda/pkgs/*
+    /opt/miniforge/bin/conda clean -afy && \
+    rm -rf /opt/miniforge/pkgs/*
 
 WORKDIR /package
 CMD ["R"]
